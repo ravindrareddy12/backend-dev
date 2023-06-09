@@ -3,14 +3,86 @@
 <head>
   <title>Word Count App</title>
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f2f2f2;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      color: #333333;
+      margin-bottom: 20px;
+    }
+
+    form {
+      margin-bottom: 20px;
+    }
+
+    label {
+      font-weight: bold;
+      color: #333333;
+    }
+
+    input[type="text"] {
+      padding: 8px;
+      font-size: 16px;
+      border-radius: 4px;
+      border: 1px solid #cccccc;
+      width: 300px;
+    }
+
+    button {
+      padding: 8px 16px;
+      font-size: 16px;
+      border-radius: 4px;
+      background-color: #4CAF50;
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+    }
+
+    h2 {
+      color: #333333;
+      margin-bottom: 10px;
+    }
+
     table {
       border-collapse: collapse;
+      width: 100%;
     }
-    
+
     th, td {
-      border: 1px solid black;
+      border: 1px solid #cccccc;
       padding: 8px;
+      text-align: left;
     }
+
+    th {
+      background-color: #f2f2f2;
+      font-weight: bold;
+    }
+
+    button.favorite-button {
+      padding: 4px 8px;
+      font-size: 14px;
+      border-radius: 4px;
+      background-color: #4CAF50;
+      color: #ffffff;
+      border: none;
+      cursor: pointer;
+    }
+
+    button.favorite-button:hover {
+      background-color: #45a049;
+    }
+  </style>
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Word Count App</title>
+  <style>
+    /* ... CSS styling code ... */
   </style>
 </head>
 <body>
@@ -18,6 +90,7 @@
   
   <form id="wordCountForm">
     <label for="urlInput">Enter Domain/Website URL:</label>
+    <br>
     <input type="text" id="urlInput" name="url" required>
     <button type="submit">Check Word Count</button>
   </form>
@@ -40,7 +113,20 @@
     const wordCountForm = document.getElementById('wordCountForm');
     const wordCountTable = document.getElementById('wordCountTable');
     const wordCountBody = document.getElementById('wordCountBody');
-    
+
+    function toggleFavoriteStatus(result, favoriteButton) {
+      const newFavoriteStatus = !result.isFavorite;
+      updateFavoriteStatus(result._id, newFavoriteStatus)
+        .then(() => {
+          favoriteButton.textContent = newFavoriteStatus ? 'Remove Favorite' : 'Mark as Favorite';
+          result.isFavorite = newFavoriteStatus;
+          favoriteButton.classList.toggle('favorite');
+        })
+        .catch(error => {
+          console.log('Failed to update favorite status:', error);
+        });
+    }
+   
     // Function to display word count results in the table
     function displayWordCountResults(data) {
       wordCountBody.innerHTML = '';
@@ -58,6 +144,7 @@
         const actionsCell = document.createElement('td');
         const favoriteButton = document.createElement('button');
         favoriteButton.textContent = result.isFavorite ? 'Remove Favorite' : 'Mark as Favorite';
+        favoriteButton.classList.add('favorite-button');
         actionsCell.appendChild(favoriteButton);
         row.appendChild(actionsCell);
         
@@ -65,15 +152,7 @@
         
         // Add event listener for favorite button
         favoriteButton.addEventListener('click', () => {
-          const newFavoriteStatus = !result.isFavorite;
-          updateFavoriteStatus(result._id, newFavoriteStatus)
-            .then(() => {
-              favoriteButton.textContent = newFavoriteStatus ? 'Remove Favorite' : 'Mark as Favorite';
-              result.isFavorite = newFavoriteStatus;
-            })
-            .catch(error => {
-              console.log('Failed to update favorite status:', error);
-            });
+          toggleFavoriteStatus(result, favoriteButton);
         });
       });
     }

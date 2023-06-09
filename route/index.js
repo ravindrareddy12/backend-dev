@@ -12,5 +12,6 @@ router.delete('/api/insights/:id',insightController.deleteInsight)
 router.patch('/api/insights/:id',insightController.updateInsight)
 
 router.get('/',insightController.home)
+router.get('/home2',insightController.home2)
 
 module.exports = router;

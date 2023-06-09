@@ -1,19 +1,22 @@
 const Insight = require('../model/insightmodel');
 
 module.exports.home= (req,res)=>{
-    return res.render('word')
+    return res.render('insight')
+}
+module.exports.home2= (req,res)=>{
+  return res.render('word')
 }
 
 module.exports.createInsights = async (req, res) => {
     try {
-      const { domain, wordCount } = req.body;
+      const { domain, wordCount, weblinks, medialinks } = req.body;
   
       if (!domain || !wordCount) {
         res.status(400).json({ error: 'Both domain and wordCount are required' });
         return;
       }
   
-      const insight = new Insight({ domain, wordCount });
+      const insight = new Insight({ domain, wordCount, weblinks, medialinks });
   
       const savedInsight = await insight.save();
   

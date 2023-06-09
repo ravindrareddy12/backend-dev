@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Get Insights App</title>
+  <style>
+    /* ... CSS styling code ... */
+    /* CSS styling code */
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f2f2f2;
+  margin: 0;
+  padding: 20px;
+}
+
+h1 {
+  color: #333333;
+  margin-bottom: 20px;
+}
+
+form {
+  margin-bottom: 20px;
+}
+
+label {
+  font-weight: bold;
+  color: #333333;
+}
+
+input[type="text"] {
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #cccccc;
+  width: 300px;
+}
+
+button {
+  padding: 8px 16px;
+  font-size: 16px;
+  border-radius: 4px;
+  background-color: #4CAF50;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+
+h2 {
+  color: #333333;
+  margin-bottom: 10px;
+}
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th, td {
+  border: 1px solid #cccccc;
+  padding: 8px;
+  text-align: left;
+}
+
+th {
+  background-color: #f2f2f2;
+  font-weight: bold;
+}
+
+button.favorite-button {
+  padding: 4px 8px;
+  font-size: 14px;
+  border-radius: 4px;
+  background-color: #4CAF50;
+  color: #ffffff;
+  border: none;
+  cursor: pointer;
+}
+
+button.favorite-button:hover {
+  background-color: #45a049;
+}
+
+  </style>
+</head>
+<body>
+    <a href="/home2">check other model</a>
+  <h1>Get Insights App</h1>
+  
+  <form id="wordCountForm">
+    <label for="urlInput">Enter Domain/Website URL:</label>
+    <br>
+    <input type="text" id="urlInput" name="url" required>
+    <button type="submit">Get Insights</button>
+  </form>
+  
+  <h2>Word Count Results</h2>
+  
+  <table id="wordCountTable">
+    <thead>
+      <tr>
+        <th>Domain</th>
+        <th>Word Count</th>
+        <th>Actions</th>
+        <th>web links</th>
+        <th>media links</th>
+      </tr>
+    </thead>
+    <tbody id="wordCountBody">
+    </tbody>
+  </table>
+
+ <div style="margin-top: 7rem;">
+    <h2>example searches</h2>
+    <h5>growth.com</h5>
+    <h5>google.com</h5>
+    <h5>example.com</h5>
+    <h5>amazon.com</h5>
+    <h5>flipcat.com</h5>
+    <h5>growth.cx</h5>
+ </div>
+  
+  <script>
+    const wordCountForm = document.getElementById('wordCountForm');
+    const wordCountTable = document.getElementById('wordCountTable');
+    const wordCountBody = document.getElementById('wordCountBody');
+    const urlInput = document.getElementById('urlInput');
+    
+    function toggleFavoriteStatus(result, favoriteButton) {
+      const newFavoriteStatus = !result.isFavorite;
+      updateFavoriteStatus(result._id, newFavoriteStatus)
+        .then(() => {
+          favoriteButton.textContent = newFavoriteStatus ? 'Remove Favorite' : 'Mark as Favorite';
+          result.isFavorite = newFavoriteStatus;
+          favoriteButton.classList.toggle('favorite');
+        })
+        .catch(error => {
+          console.log('Failed to update favorite status:', error);
+        });
+    }
+   
+    // Function to display word count results in the table
+    // Function to display word count results in the table
+function displayWordCountResults(data) {
+  wordCountBody.innerHTML = '';
+
+  const searchValue = urlInput.value.trim();
+
+  data.forEach(result => {
+    if (result.domain === searchValue) {
+      const row = document.createElement('tr');
+
+      const domainCell = document.createElement('td');
+      domainCell.textContent = result.domain;
+      row.appendChild(domainCell);
+
+      const wordCountCell = document.createElement('td');
+      wordCountCell.textContent = result.wordCount;
+      row.appendChild(wordCountCell);
+
+      const actionsCell = document.createElement('td');
+      const favoriteButton = document.createElement('button');
+      favoriteButton.textContent = result.isFavorite ? 'Remove Favorite' : 'Mark as Favorite';
+      favoriteButton.classList.add('favorite-button');
+      actionsCell.appendChild(favoriteButton);
+      row.appendChild(actionsCell);
+
+      const webLinksCell = document.createElement('td');
+      webLinksCell.textContent = result.weblinks;
+      row.appendChild(webLinksCell);
+
+      const mediaLinksCell = document.createElement('td');
+      mediaLinksCell.textContent = result.medialinks;
+      row.appendChild(mediaLinksCell);
+
+      wordCountBody.appendChild(row);
+
+      // Add event listener for favorite button
+      favoriteButton.addEventListener('click', () => {
+        toggleFavoriteStatus(result, favoriteButton);
+      });
+    }
+  });
+}
+
+    
+    // Function to fetch word count results from the server
+    function fetchWordCountResults() {
+      fetch('/api/insights')
+        .then(response => response.json())
+        .then(data => {
+          displayWordCountResults(data);
+        })
+        .catch(error => {
+          console.log('Failed to fetch word count results:', error);
+        });
+    }
+    
+    // Function to update the favorite status of an insight
+    function updateFavoriteStatus(id, isFavorite) {
+      return fetch(`/api/insights/${id}`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ isFavorite })
+      });
+    }
+    
+    // Add event listener for the word count form submission
+    wordCountForm.addEventListener('submit', event => {
+      event.preventDefault();
+      
+      const searchValue = urlInput.value.trim();
+      
+      if (searchValue !== '') {
+        fetchWordCountResults();
+      }
+    });
+    
+    // Fetch word count results on page load
+    fetchWordCountResults();
+  </script>
+</body>
+</html>

@@ -1,6 +1,5 @@
 const mongoose = require('mongoose');
-
-mongoose.connect('mongodb://127.0.0.1:27017/wordcount');
+mongoose.connect('mongodb+srv://ravindra:ravi123@cluster0.aywfm1p.mongodb.net/backend?retryWrites=true&w=majority');
 
 const db = mongoose.connection;
 

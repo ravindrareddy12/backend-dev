@@ -16,6 +16,14 @@ const insightSchema = new Schema({
       type: Boolean,
       default: false,
     },
+    weblinks:{
+      type: String,
+      required: true
+    },
+    medialinks:{
+      type : String,
+      required: true
+    }
   });
 
   const Insight = mongoose.model('Insight', insightSchema);
